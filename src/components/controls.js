@@ -1,36 +1,46 @@
 import React, { useState } from 'react';
 import Display from './display';
 
-export const newHit = stats => {
+// ================ Logic Functions ===================
+
+export const newHit = startStats => {
+  let stats = {...startStats};
   stats.hits++;
   stats.strikes = 0;
   stats.balls = 0;
-  // Are stats being passed by reference here?
-  // (It works without returning anything.)
+  return stats;
 }
 
-export const newStrike = stats => {
+export const newStrike = startStats => {
+  let stats = {...startStats};
   stats.strikes++;
   if (stats.strikes === 3) {
     stats.strikes = 0;
     stats.balls = 0;
   }
+  return stats;
 }
 
-export const newBall = stats => {
+export const newBall = startStats => {
+  let stats = {...startStats};
   stats.balls++;
   if (stats.balls === 4) {
     stats.strikes = 0;
     stats.balls = 0;
   }
+  return stats;
 }
 
-export const newFoul = stats => {
-  stats.fouls++;
+export const newFoul = startStats => {
+  let stats = {...startStats};
+  stats.fouls++; // Do fouls ever need to reset?
   if (stats.strikes < 2) {
     stats.strikes++;
   }
+  return stats;
 }
+
+// ============== Controls Component ================
 
 const Controls = () => {
     const [stats, setStats] = useState(
@@ -43,6 +53,8 @@ const Controls = () => {
     );
     
     console.log("Current stats:", stats);
+
+    // ------- Event Handlers -----------
 
     const handleHit = e => {
       e.preventDefault();
@@ -64,6 +76,8 @@ const Controls = () => {
       let tempStats = newFoul(stats);
       setStats({...stats, ...tempStats});
     }
+
+    // ------------- Return ---------------
 
   return (
     <div className="container">
