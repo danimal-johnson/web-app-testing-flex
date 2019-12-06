@@ -1,46 +1,12 @@
 import React, { useState } from 'react';
 import Display from './display';
+import { newHit, newStrike, newBall, newFoul } from './logic'
 
-// ================ Logic Functions ===================
+// ================ Logic Functions =====================
 
-export const newHit = startStats => {
-  let stats = {...startStats};
-  stats.hits++;
-  stats.strikes = 0;
-  stats.balls = 0;
-  return stats;
-}
+// ** Moved to external file (logic.js) to enable testing
 
-export const newStrike = startStats => {
-  let stats = {...startStats};
-  stats.strikes++;
-  if (stats.strikes === 3) {
-    stats.strikes = 0;
-    stats.balls = 0;
-  }
-  return stats;
-}
-
-export const newBall = startStats => {
-  let stats = {...startStats};
-  stats.balls++;
-  if (stats.balls === 4) {
-    stats.strikes = 0;
-    stats.balls = 0;
-  }
-  return stats;
-}
-
-export const newFoul = startStats => {
-  let stats = {...startStats};
-  stats.fouls++; // Do fouls ever need to reset?
-  if (stats.strikes < 2) {
-    stats.strikes++;
-  }
-  return stats;
-}
-
-// ============== Controls Component ================
+// ============== Controls Component ====================
 
 const Controls = () => {
     const [stats, setStats] = useState(
@@ -52,28 +18,34 @@ const Controls = () => {
       }
     );
     
-    console.log("Current stats:", stats);
+    // console.log("Current stats:", stats);
 
     // ------- Event Handlers -----------
-
+    // TODO: Use a callback fn() so we don't need 4 copies of this.
     const handleHit = e => {
       e.preventDefault();
-      let tempStats = newHit(stats);
+      // Make a copy to prevent state values being passed
+      // by reference outside this file.
+      let statsCopy = {...stats}; 
+      let tempStats = newHit(statsCopy);
       setStats({...stats, ...tempStats});
     }
     const handleStrike = e => {
       e.preventDefault();
-      let tempStats = newStrike(stats);
+      let statsCopy = {...stats};
+      let tempStats = newStrike(statsCopy);
       setStats({...stats, ...tempStats});
     }
     const handleBall = e => {
       e.preventDefault();
-      let tempStats = newBall(stats);
+      let statsCopy = {...stats};
+      let tempStats = newBall(statsCopy);
       setStats({...stats, ...tempStats});
     }
     const handleFoul = e => {
       e.preventDefault();
-      let tempStats = newFoul(stats);
+      let statsCopy = {...stats};
+      let tempStats = newFoul(statsCopy);
       setStats({...stats, ...tempStats});
     }
 
@@ -86,7 +58,6 @@ const Controls = () => {
       <button onClick={handleBall}>Ball</button>
       <button onClick={handleFoul}>Foul</button>      
       <Display stats={stats} />
-      <h3>Strikes are really {stats.strikes}</h3>
     </div>
   );
 
